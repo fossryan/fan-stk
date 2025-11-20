@@ -1,0 +1,39 @@
+# fly.toml - Fly.io Configuration for InvestLeague
+
+app = "investleague"  # Change this to your desired app name
+primary_region = "iad"  # Change to your preferred region (iad=Washington DC)
+
+[build]
+  # Use the Dockerfile in the project root
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    grace_period = "30s"
+    interval = "15s"
+    method = "GET"
+    timeout = "5s"
+    path = "/api/health"
+
+[mounts]
+  source = "investleague_data"
+  destination = "/app/data"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
+
+# Secrets (Set these with: fly secrets set KEY=VALUE)
+# JWT_SECRET=your-secret-key
+# ALPHA_VANTAGE_API_KEY=your-api-key
